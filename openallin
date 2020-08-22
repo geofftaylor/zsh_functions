@@ -1,0 +1,18 @@
+# Open matching files in a specific application
+openallin() {
+    if [ -z "$1" ] || [ -z "$2" ]; then
+        echo "Usage: openallin APPLICATION 'INCLUDE FILE PATTERN' [MAX_DEPTH] ['EXCLUDE FILE PATTERN']"
+    else
+        if [ -z "$3" ]; then
+            maxdepth=1
+        else
+            maxdepth="$3"
+        fi
+        
+        if [ -z "$4" ]; then
+            find . -type f -maxdepth "$maxdepth" -iname "$2" -exec open -a "$1" "{}" \;
+        else
+            find . -type f -maxdepth "$maxdepth" -iname "$2" ! -iname "$4" -exec open -a "$1" "{}" \;
+        fi
+    fi
+}

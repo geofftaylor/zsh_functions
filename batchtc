@@ -1,0 +1,36 @@
+# Get the names of all .mkv files in the current directory,
+# write those names into a file called 'queue.txt',
+# and call batch.rb to transcode the files using other-transcode.
+# Any arguments passed to this function, e.g., --mp4, are passed through to batch.rb.
+# https://github.com/donmelton/other_video_transcoding
+
+batchtc() {
+    # Get current directory and set queue file path
+    wd=`pwd`
+    queuefile="${wd}/queue.txt"
+
+    # Remove queue.txt if it exists
+    if [[ -f ${queuefile} ]]; then
+        rm "${queuefile}"
+    fi
+
+    mkvcount=0
+
+    # Get each .mkv file in the current directory,
+    # concatenate it with the directory name,
+    # and append the full path to queue.txt.
+    for mkv in *.mkv; do
+        ((mkvcount++))
+        fullpath="${wd}/${mkv}"
+        echo "${fullpath}" >> "${queuefile}"
+    done
+
+    # Call batch.rb, passing any arguments that were passed to this function.
+    if [[ $mkvcount -gt 0 ]]; then
+        echo "Found $mkvcount .mkv files"
+        echo "Running $HOME/scripts/batch.rb $@"
+        $HOME/scripts/batch.rb "$@"
+    else
+        echo "No .mkv files found"
+    fi
+}
